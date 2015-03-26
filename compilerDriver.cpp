@@ -59,7 +59,8 @@ int main()
 	do
 	{
 		cout << "Input file name (default is 'exampleProgram.txt'): ";
-		cin >> fileName;
+		fileName = "exampleProgram.txt";
+		//cin >> fileName;
 
 		file.open(fileName);
 		badFile = file.fail();

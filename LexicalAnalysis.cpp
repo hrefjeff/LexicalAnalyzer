@@ -1138,6 +1138,8 @@ int LexicalAnalysis::Analyze()
 
 			do
 			{
+				if (PEAKingBuffer == NULL)
+					return IDENT;
 				if (*PEAKingBuffer == ' ')
 					return IDENT;
 				if (*PEAKingBuffer == ';')
@@ -1147,8 +1149,6 @@ int LexicalAnalysis::Analyze()
 				if (*PEAKingBuffer == ',')
 					return IDENT;
 				if (*PEAKingBuffer == ')')
-					return IDENT;
-				if (PEAKingBuffer == NULL)
 					return IDENT;
 
 				_getCharFromInput();
@@ -1167,6 +1167,8 @@ int LexicalAnalysis::Analyze()
 
 			do 
 			{	
+				if (PEAKingBuffer == NULL)
+					return INT_LIT;
 				if (*PEAKingBuffer == ' ')
 					return INT_LIT;
 				if (*PEAKingBuffer == ';')
@@ -1174,8 +1176,6 @@ int LexicalAnalysis::Analyze()
 				if (*PEAKingBuffer == ':')
 					return INT_LIT;
 				if (*PEAKingBuffer == ',')
-					return INT_LIT;
-				if (PEAKingBuffer == NULL)
 					return INT_LIT;
 
 				if (charClass == LETTER || charClass == UNDERSCORE)
