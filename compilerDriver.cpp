@@ -14,7 +14,7 @@ Description : Compiler
 
 using namespace std;
 
-void printDiagnostics();
+void printDiagnostics(int);
 string convertToken(int t);
 
 unordered_map<string, int> errorTable;
@@ -50,7 +50,7 @@ int main()
 	ifstream file;
 	string  fileName;
 	string  nextLine;
-	int lineNumber = 1;
+	int lineNumber = 0;
 
 	bool badFile = true;
 
@@ -58,8 +58,8 @@ int main()
 	do
 	{
 		cout << "Input file name (default is 'exampleProgram.txt'): ";
-		fileName = "exampleProgram.txt";
-		//cin >> fileName;
+		//fileName = "exampleProgram.txt";
+		cin >> fileName;
 
 		file.open(fileName);
 		badFile = file.fail();
@@ -74,6 +74,7 @@ int main()
 	// Read entire program
 	while (!file.eof())
 	{
+		lineNumber++;
 		LineInProgram.preprocess();
 
 		cout << "________________________________________________________" << endl;
@@ -100,35 +101,30 @@ int main()
 
 		getline(file,nextLine);
 		LineInProgram.setNewInput(nextLine);
-		lineNumber++;
 		token = SPACE;
 	}
 
-	printDiagnostics();
+	printDiagnostics(lineNumber);
 
 	system("PAUSE");
 	return 0;
 }
 
-void printDiagnostics()
+void printDiagnostics(int numOfLines)
 {
-	cout << endl << endl;
-	cout << "======================================" << endl;
-	cout << "       Program Diagnostic Report      " << endl;
-	cout << "======================================" << endl;
+	
 	int errorCount = 0;
 	int tokenCount = 0;
 	for (auto x : errorTable)
 	{
 		errorCount++;
 	}
-	for (auto x : symbolTable)
-	{
-		cout << x.first << "\t:\t" << x.second << endl;
-		tokenCount++;
-	}
 
-	cout << "Number of tokens : " << tokenCount << endl;
+	cout << endl << endl;
+	cout << "======================================" << endl;
+	cout << "|       Program Diagnostic Report     |" << endl;
+	cout << "======================================" << endl;
+	cout << "Number of lines  : " << numOfLines << endl;
 	cout << "Number of errors : " << errorCount << endl << endl;
 
 	cout << endl << endl;
