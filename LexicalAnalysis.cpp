@@ -83,6 +83,7 @@ void LexicalAnalysis::_getCharFromInput()
 	if (buffer == ')') charClass = R_PAREN;
 	if (buffer == '$') charClass = ENDOFLINE;
 	if (buffer == '+') charClass = OP_PLUS;
+	if (buffer == '-') charClass = OP_MINUS;
 	if (buffer == ';') charClass = SEMICOLON;
 	if (buffer == ':') 
 	{
@@ -957,6 +958,7 @@ int LexicalAnalysis::Analyze()
 	/*.........1) Huge Switch Statement...........*/
 	switch (charClass)
 	{
+		case UNDERSCORE:
 		case LETTER:
 		{
 			_addCharToLexeme();
@@ -1216,6 +1218,13 @@ int LexicalAnalysis::Analyze()
 			return OP_PLUS;
 			break;
 
+		case OP_MINUS:
+			_addCharToLexeme();
+			_getCharFromInput();
+
+			return OP_MINUS;
+			break;
+
 		case SEMICOLON:
 			_addCharToLexeme();
 			_getCharFromInput();
@@ -1251,13 +1260,6 @@ int LexicalAnalysis::Analyze()
 			_getCharFromInput();
 
 			return OP_MULT;
-			break;
-
-		case UNDERSCORE:
-			_addCharToLexeme();
-			_getCharFromInput();
-
-			return UNDERSCORE;
 			break;
 
 		case L_PAREN:

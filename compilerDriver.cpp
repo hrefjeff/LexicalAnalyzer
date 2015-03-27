@@ -14,8 +14,10 @@ Description : Compiler
 
 using namespace std;
 
+void printDiagnostics();
 string convertToken(int t);
 
+unordered_map<string, int> errorTable;
 unordered_map<string, int> symbolTable =
 {
 	{ "PROGRAM", 1 },
@@ -41,13 +43,10 @@ unordered_map<string, int> symbolTable =
 	{ ")",      21 }
 };
 
-pair<string, int> tableEntry;
-
 int main()
 {
-	cout << "==================== Jeffrey's Lexical Analysis ===================" << endl;
-	int token = SPACE;
-
+	cout << "==================== Jeffrey's Lexical Analysis ===================" << endl << endl;
+	
 	ifstream file;
 	string  fileName;
 	string  nextLine;
@@ -67,10 +66,10 @@ int main()
 
 	} while (badFile);
 
-	cout << endl << endl;
-
 	getline(file,nextLine);
+
 	LexicalAnalysis LineInProgram(nextLine);
+	int token = SPACE;
 
 	// Read entire program
 	while (!file.eof())
@@ -85,15 +84,18 @@ int main()
 		{
 			token = LineInProgram.Analyze();
 
-			if (token == ENDOFLINE)
-				continue;
+			if (token == ENDOFLINE) continue;
 
 			if (token == ERROR)
-				cout << "\tERROR" << "\t" << LineInProgram.lexeme << endl;
-			else 
+			{
+				cout << "\tInvalid Token" << " ------> " << LineInProgram.lexeme << endl;
+				errorTable.insert(make_pair((LineInProgram.lexeme).append("Unrecognized token."), token));
+			}
+			else
+			{
 				cout << "\t" << token << "\t" << LineInProgram.lexeme << endl;
-
-			symbolTable.insert(make_pair(LineInProgram.lexeme, token));
+				symbolTable.insert(make_pair(LineInProgram.lexeme, token));
+			}
 		}
 
 		getline(file,nextLine);
@@ -102,15 +104,40 @@ int main()
 		token = SPACE;
 	}
 
+	printDiagnostics();
+
 	system("PAUSE");
 	return 0;
+}
+
+void printDiagnostics()
+{
+	cout << endl << endl;
+	cout << "======================================" << endl;
+	cout << "       Program Diagnostic Report      " << endl;
+	cout << "======================================" << endl;
+	int errorCount = 0;
+	int tokenCount = 0;
+	for (auto x : errorTable)
+	{
+		errorCount++;
+	}
+	for (auto x : symbolTable)
+	{
+		cout << x.first << "\t:\t" << x.second << endl;
+		tokenCount++;
+	}
+
+	cout << "Number of tokens : " << tokenCount << endl;
+	cout << "Number of errors : " << errorCount << endl << endl;
+
+	cout << endl << endl;
 }
 
 string convertToken(int tok)
 {
 	switch (tok)
 	{
-		//auto search = symbolTable.find("DIV");
 		case PROGRAM  : return "PROGRAM";
 		case VAR      : return "VAR";
 		case BEGIN    : return "BEGIN";
@@ -131,6 +158,7 @@ string convertToken(int tok)
 		case DIGIT    : return "DIGIT";
 		case ERROR    : return "ERROR";
 		case OP_PLUS  : return "OP_PLUS";
+		case OP_MINUS : return "OP_MINUS";
 		case OP_MULT  : return "OP_MULT";
 		case DIV      : return "DIV";
 		case COMMENT  : return "COMMENT_BEG";
@@ -145,6 +173,7 @@ string convertToken(int tok)
 	}
 }
 
+//auto search = symbolTable.find("DIV");
 //cout << search->first << " has " << search->second << endl;
 
 // range based loop. auto uses type inferences. 
