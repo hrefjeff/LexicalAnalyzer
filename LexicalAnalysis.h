@@ -35,7 +35,6 @@ class LexicalAnalysis
 
 		void _addCharToLexeme();
 		void _getCharFromInput();
-		void _initBuffer();
 		void _removeCharFromInput();
 		void _retract();
 
@@ -49,6 +48,7 @@ class LexicalAnalysis
 		~LexicalAnalysis();
 		
 		void setNewInput(string in);
+		void initBuffer();
 		void preprocess();
 
 		bool PROGRAM_recognizer();

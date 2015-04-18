@@ -1,4 +1,5 @@
-(* Program to average 100 integers *)
+(* Program to average 100
+integers *)
 PROGRAM AVERAGE
 VAR
 	SUM, VALUE, AVERAGE, I, _RED : INTEGER

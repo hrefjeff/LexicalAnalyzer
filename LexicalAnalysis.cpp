@@ -15,7 +15,7 @@ LexicalAnalysis::LexicalAnalysis(string someInput)
 	buffer = ' ';
 	PEAKingBuffer = NULL;
 	lexeme = "";
-	_initBuffer();
+	initBuffer();
 }
 
 LexicalAnalysis::~LexicalAnalysis(){}
@@ -99,7 +99,18 @@ void LexicalAnalysis::_getCharFromInput()
 
 }
 
-void LexicalAnalysis::_initBuffer()
+void LexicalAnalysis::_removeCharFromInput()
+{
+	_input.erase(0, 1);
+}
+
+void LexicalAnalysis::_retract()
+{
+	if (_input.size() > 0)
+		PEAKingBuffer = &_input[0];
+}
+
+void LexicalAnalysis::initBuffer()
 {
 	if (_input.size() > 0)
 	{
@@ -134,7 +145,7 @@ void LexicalAnalysis::_initBuffer()
 			charClass = L_PAREN;
 	}
 
-	if (buffer == '*') 
+	if (buffer == '*')
 	{
 		if (*PEAKingBuffer == ')')
 			charClass = ENDCOMMENT;
@@ -146,7 +157,7 @@ void LexicalAnalysis::_initBuffer()
 	if (buffer == '$') charClass = ENDOFLINE;
 	if (buffer == '+') charClass = OP_PLUS;
 	if (buffer == ';') charClass = SEMICOLON;
-	if (buffer == ':') 
+	if (buffer == ':')
 	{
 		if (*PEAKingBuffer == '=')
 			charClass = OP_ASSIGN;
@@ -159,17 +170,6 @@ void LexicalAnalysis::_initBuffer()
 	if (buffer == '_') charClass = UNDERSCORE;
 	if (buffer == '\t') charClass = TAB;
 	if (buffer == ' ') charClass = SPACE;
-}
-
-void LexicalAnalysis::_removeCharFromInput()
-{
-	_input.erase(0, 1);
-}
-
-void LexicalAnalysis::_retract()
-{
-	if (_input.size() > 0)
-		PEAKingBuffer = &_input[0];
 }
 
 void LexicalAnalysis::setNewInput(string someInput)
@@ -912,37 +912,31 @@ int LexicalAnalysis::Analyze()
 {
 	/*.........1) Initialize...........*/
 	lexeme = "";
-	_initBuffer();
 
 	if (charClass == SPACE)
 	{
 		_removeCharFromInput();
-		_initBuffer();
+		initBuffer();
 	}
 
 	if (charClass == TAB)
 	{
 		_removeCharFromInput();
-		_initBuffer();
+		initBuffer();
 	}
 
-
-	// If '(*' begin comment
 	if (charClass == COMMENT)
 	{
-		//cout << "begin comment" << endl;
-
-		// while buffer is not *, and peakingbuffer is not ), keep gettin characters
-		// keep going while true
 		while (charClass != ENDCOMMENT)
 		{
-			//cout << buffer << " : " << PEAKingBuffer << " --- " << charClass << " ==? " << ENDCOMMENT << endl;
+			// if EOL, return comment cuz it's a multiline comment
+			if (PEAKingBuffer == NULL) return COMMENT;
+
 			_getCharFromInput();
 		}
 
 		_getCharFromInput();
 		_getCharFromInput();
-		//cout << "end comment" << endl;
 	}
 
 	if (charClass == ERROR)
@@ -955,7 +949,7 @@ int LexicalAnalysis::Analyze()
 	if (charClass == ENDOFLINE)
 		return ENDOFLINE;
 
-	/*.........1) Huge Switch Statement...........*/
+	/*.........2) Huge Switch Statement...........*/
 	switch (charClass)
 	{
 		case UNDERSCORE:

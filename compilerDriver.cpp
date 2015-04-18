@@ -83,7 +83,22 @@ int main()
 		// Read one line of program at a time
 		while (token != ENDOFLINE)
 		{
+			LineInProgram.initBuffer();
 			token = LineInProgram.Analyze();
+
+			// Handle multiline comment
+			while (token == COMMENT)
+			{
+				lineNumber++;
+				getline(file,nextLine);
+				cout << "========SNNNNNNAP. THAT LINE WAS A COMMENT!=============" << endl;
+				cout << lineNumber << "\t" << nextLine << endl << endl;
+				LineInProgram.setNewInput(nextLine);
+				LineInProgram.preprocess();
+				LineInProgram.initBuffer();
+				LineInProgram.charClass = COMMENT;
+				token = LineInProgram.Analyze();
+			}
 
 			if (token == ENDOFLINE) continue;
 
@@ -101,6 +116,7 @@ int main()
 
 		getline(file,nextLine);
 		LineInProgram.setNewInput(nextLine);
+		LineInProgram.initBuffer();
 		token = SPACE;
 	}
 
