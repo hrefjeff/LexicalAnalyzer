@@ -44,6 +44,7 @@ class LexicalAnalysis
 		int    charClass;
 		string lexeme;
 
+		LexicalAnalysis();
 		LexicalAnalysis(string in = "");
 		~LexicalAnalysis();
 		
@@ -64,7 +65,7 @@ class LexicalAnalysis
 		bool DO_recognizer();
 		bool DIV_recognizer();
 
-		int Analyze();
+		int Lex();
 };
 
 #endif

@@ -8,6 +8,15 @@ Description : This is the implementation file for a lexical analyzer
 #include <string>
 #include "LexicalAnalysis.h"
 
+LexicalAnalysis::LexicalAnalysis() : _input("")
+{
+	charClass = ERROR;
+	buffer = ' ';
+	PEAKingBuffer = NULL;
+	lexeme = "";
+	initBuffer();
+}
+
 LexicalAnalysis::LexicalAnalysis(string someInput)
 {
 	_input = someInput;
@@ -908,7 +917,7 @@ bool LexicalAnalysis::DIV_recognizer()
 	2) Huge Switch statement for recognizers
 	   
 ============================*/
-int LexicalAnalysis::Analyze()
+int LexicalAnalysis::Lex()
 {
 	/*.........1) Initialize...........*/
 	lexeme = "";

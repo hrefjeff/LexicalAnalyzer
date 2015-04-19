@@ -1,8 +1,9 @@
 /********************************************************************
 Name        : Jeffrey Allen
 Class       : CS421, Otuhmatuh
-Assignment  : Lexical Analyzer
-Description : Compiler
+Assignment  : Lexical Analyzer + Syntaxtic Analyzer
+Description : This program demonstrates how a compiler analyzes
+              source code lexically and syntactically
 ********************************************************************/
 
 #include <cstdlib>
@@ -14,8 +15,17 @@ Description : Compiler
 
 using namespace std;
 
+//======Global Variables=======
+LexicalAnalysis LineInProgram;
+ifstream file;
+string  nextLine;
+int token;
+//=============================
+
 void printDiagnostics(int);
 string convertToken(int t);
+
+bool programNameRecognizer(char* next);
 
 unordered_map<string, int> errorTable;
 unordered_map<string, int> symbolTable =
@@ -47,9 +57,7 @@ int main()
 {
 	cout << "==================== Jeffrey's Lexical Analysis ===================" << endl << endl;
 	
-	ifstream file;
 	string  fileName;
-	string  nextLine;
 	int lineNumber = 0;
 
 	bool badFile = true;
@@ -57,9 +65,9 @@ int main()
 	// Get file
 	do
 	{
-		cout << "Input file name (default is 'exampleProgram.txt'): ";
-		//fileName = "exampleProgram.txt";
-		cin >> fileName;
+		//cout << "Input file name (default is 'exampleProgram.txt'): ";
+		fileName = "exampleProgram.txt";
+		//cin >> fileName;
 
 		file.open(fileName);
 		badFile = file.fail();
@@ -67,9 +75,8 @@ int main()
 	} while (badFile);
 
 	getline(file,nextLine);
-
-	LexicalAnalysis LineInProgram(nextLine);
-	int token = SPACE;
+	LineInProgram.setNewInput(nextLine);
+	token = SPACE;
 
 	// Read entire program
 	while (!file.eof())
@@ -81,10 +88,11 @@ int main()
 		cout << lineNumber << "\t" << nextLine << endl << endl;
 
 		// Read one line of program at a time
+		// have to find new way to get next token (advance function?)
 		while (token != ENDOFLINE)
 		{
 			LineInProgram.initBuffer();
-			token = LineInProgram.Analyze();
+			token = LineInProgram.Lex();
 
 			// Handle multiline comment
 			while (token == COMMENT)
@@ -97,7 +105,7 @@ int main()
 				LineInProgram.preprocess();
 				LineInProgram.initBuffer();
 				LineInProgram.charClass = COMMENT;
-				token = LineInProgram.Analyze();
+				token = LineInProgram.Lex();
 			}
 
 			if (token == ENDOFLINE) continue;
@@ -106,11 +114,12 @@ int main()
 			{
 				cout << "\tInvalid Token" << " ------> " << LineInProgram.lexeme << endl;
 				errorTable.insert(make_pair((LineInProgram.lexeme).append("Unrecognized token."), token));
-			}
-			else
-			{
+			
+			} else {
+
 				cout << "\t" << token << "\t" << LineInProgram.lexeme << endl;
 				symbolTable.insert(make_pair(LineInProgram.lexeme, token));
+			
 			}
 		}
 
@@ -126,9 +135,16 @@ int main()
 	return 0;
 }
 
+/*-------------------------------------------------------------------
+Name      : printDiagnostics
+Writer(s) : Jeffrey Allen
+Purpose   : Outputs a diagnostics message to the console, displaying
+            the number of errors accumulated in the error table
+Incoming  : int
+Outgoing  : n/a
+-------------------------------------------------------------------*/
 void printDiagnostics(int numOfLines)
 {
-	
 	int errorCount = 0;
 	int tokenCount = 0;
 	for (auto x : errorTable)
@@ -146,6 +162,13 @@ void printDiagnostics(int numOfLines)
 	cout << endl << endl;
 }
 
+/*-------------------------------------------------------------------
+Name      : convertToken
+Writer(s) : Jeffrey Allen
+Purpose   : Converts an integer representation of token to string
+Incoming  : int
+Outgoing  : string
+-------------------------------------------------------------------*/
 string convertToken(int tok)
 {
 	switch (tok)
@@ -185,16 +208,54 @@ string convertToken(int tok)
 	}
 }
 
-//auto search = symbolTable.find("DIV");
-//cout << search->first << " has " << search->second << endl;
+bool programNameRecognizer(int next)
+{
+	if (next == IDENT)
+		return true;
+	return false;
+}
 
-// range based loop. auto uses type inferences. 
-// uses initialization expression to determine it's type.
-// neato.
-/*for (auto x : symbolTable)
-cout << x.first << "\t:\t" << x.second << endl;
+void term()
+{
+	factor();
 
-auto search = symbolTable.find("END.");
+	while (nextToken == OP_MULT || nextToken == DIV)
+	{
+		LineInProgram.Lex();
+		factor();
+	}
+}
 
-cout << search->first << " : " << search->second << endl;
-*/
+void expr()
+{
+	term();
+
+	while (nextToken == OP_PLUS || nextToken == OP_MINUS)
+	{
+		lex();
+		term();
+	}
+
+}
+
+void factor()
+{
+	if (nextToken == IDENT || nextToken == INT_LIT)
+		LineInProgram.Analyze();
+
+	else {
+	
+		if (nextToken == L_PAREN)
+		{
+			lex();
+			expr();
+
+			if (nextToken == R_PAREN)
+				lex();
+
+			else
+				cout << "Error!!" << endl;
+		}
+
+	}
+}
