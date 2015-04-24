@@ -15,12 +15,25 @@ using namespace std;
 
 enum TOKENS
 {
-	ZEROPLACEHOLDER, PROGRAM, VAR, BEGIN, END, 
-	END_PROG, INTEGER, FOR, READ, WRITE, 
-	TO, DO, SEMICOLON, COLON, COMMA, 
-	OP_ASSIGN, OP_PLUS, OP_MINUS, OP_MULT, DIV, 
-	L_PAREN, R_PAREN, IDENT, INT_LIT, COMMENT, 
-	ENDCOMMENT, UNDERSCORE, LETTER, DIGIT, DELIMITER, ERROR,
+	// Tokens 0-5
+	ZEROPLACEHOLDER, PROGRAM, VAR, BEGIN, END, END_PROG,
+
+	// Tokens 6-10
+	INTEGER, FOR, READ, WRITE, TO,
+
+	// Tokens 11-15
+	DO, SEMICOLON, COLON, COMMA, OP_ASSIGN,
+
+	// Tokens 16-20
+	OP_PLUS, OP_MINUS, OP_MULT, DIV, L_PAREN,
+
+	// Tokens 21-25
+	R_PAREN, IDENT, INT_LIT, COMMENT, ENDCOMMENT,
+
+	// Tokens 26-30
+	UNDERSCORE, LETTER, DIGIT, DELIMITER, ERROR,
+
+	// Tokens 31-33
 	SPACE, TAB, ENDOFLINE
 };
 enum INTERNAL_STATES
@@ -45,7 +58,7 @@ class LexicalAnalysis
 		string lexeme;
 
 		LexicalAnalysis();
-		LexicalAnalysis(string in = "");
+		LexicalAnalysis(string);
 		~LexicalAnalysis();
 		
 		void setNewInput(string in);

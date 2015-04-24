@@ -1281,4 +1281,6 @@ int LexicalAnalysis::Lex()
 
 		return ERROR;
 	}
+
+	return ERROR;
 }
