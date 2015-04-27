@@ -60,8 +60,6 @@ void LexicalAnalysis::_getCharFromInput()
 	// Initializer
 	charClass = ERROR;
 
-	//cout << "Char is: " << buffer << ". Upper is: " << upperCaseChar << endl;
-
 	// If it's letter, classify it as a letter
 	if ((buffer > 64) && (buffer < 91))
 		charClass = LETTER;
@@ -946,6 +944,11 @@ int LexicalAnalysis::Lex()
 
 		_getCharFromInput();
 		_getCharFromInput();
+
+		if (buffer == '$')
+		{
+			return ENDOFLINE;
+		}
 	}
 
 	if (charClass == ERROR)
@@ -956,7 +959,10 @@ int LexicalAnalysis::Lex()
 	}
 
 	if (charClass == ENDOFLINE)
+	{
+		_removeCharFromInput();
 		return ENDOFLINE;
+	}
 
 	/*.........2) Huge Switch Statement...........*/
 	switch (charClass)

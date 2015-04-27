@@ -1,1 +1,3 @@
-something := 1;
+(* Program to average 100 integers *)
+PROGRAM jeff 
+	VAR first, second, third : INTEGER;
