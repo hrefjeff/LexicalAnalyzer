@@ -133,16 +133,17 @@ void printDiagnostics(int numOfLines)
 {
 	int errorCount = 0;
 	int tokenCount = 0;
+
+	cout << endl << endl;
+	cout << "======================================" << endl;
+	cout << "|       Program Diagnostic Report    |" << endl;
+	cout << "======================================" << endl;
 	for (auto x : errorTable)
 	{
 		cout << x.second << ": " << x.first << endl;
 		errorCount++;
 	}
-
-	cout << endl << endl;
-	cout << "======================================" << endl;
-	cout << "|       Program Diagnostic Report     |" << endl;
-	cout << "======================================" << endl;
+	cout << endl;
 	cout << "Number of lines  : " << numOfLines << endl;
 	cout << "Number of errors : " << errorCount << endl << endl;
 
@@ -204,6 +205,20 @@ void advance()
 		LINE_NUMBER++;
 		THE_PROGRAM.initBuffer();
 		TOKEN = THE_PROGRAM.Lex();
+	}
+
+	if (TOKEN == ERROR)
+	{
+		error("Invalid token", LINE_NUMBER);
+		THE_PROGRAM.initBuffer();
+		TOKEN = THE_PROGRAM.Lex();
+		
+		if (TOKEN == ENDOFLINE)
+		{
+			LINE_NUMBER++;
+			THE_PROGRAM.initBuffer();
+			TOKEN = THE_PROGRAM.Lex();
+		}
 	}
 }
 
