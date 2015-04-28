@@ -1,3 +1,1 @@
-(* Program to average 100 integers *)
-PROGRAM jeff 
-	VAR first, second, third : INTEGER;
+SUM := 0;
